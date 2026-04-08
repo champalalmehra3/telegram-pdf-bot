@@ -5,8 +5,6 @@ import os
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-Apna channel link yahan set karo
-
 CHANNEL_LINK = "https://t.me/raj_education_news"
 
 async def handle_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
