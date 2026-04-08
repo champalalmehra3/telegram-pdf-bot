@@ -1,44 +1,59 @@
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
-from pypdf import PdfReader, PdfWriter
+from PyPDF2 import PdfReader, PdfWriter
+import os
 
-BOT_TOKEN = "8651677584:AAG0nEioCT6RHP68zvGTgQUUJ5VH7I_rY1s"
+Railway environment variable se token lega
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
+Apna channel link yahan set karo
 
 CHANNEL_LINK = "https://t.me/raj_education_news"
 
 async def handle_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    document = update.message.document
+document = update.message.document
 
-    # Original file name
-    file_name = document.file_name
+# Original file name
+file_name = document.file_name
 
-    # Download file
-    file = await document.get_file()
-    await file.download_to_drive(file_name)
+# Download file
+file = await document.get_file()
+await file.download_to_drive(file_name)
 
-    # Read and write PDF
-    reader = PdfReader(file_name)
-    writer = PdfWriter()
+# Read and write PDF
+reader = PdfReader(file_name)
+writer = PdfWriter()
 
-    for page in reader.pages:
-        writer.add_page(page)
+for page in reader.pages:
+    writer.add_page(page)
 
-    # Metadata me link add (safe method)
-    writer.add_metadata({
-        "/Title": CHANNEL_LINK,
-        "/Author": "Telegram Bot"
-    })
+# Metadata me link add (optional but safe)
+writer.add_metadata({
+    "/Title": CHANNEL_LINK,
+    "/Author": "Telegram Bot"
+})
 
-    # Save same name
-    with open(file_name, "wb") as f:
-        writer.write(f)
+# Save file
+with open(file_name, "wb") as f:
+    writer.write(f)
 
-    # Send back
-    await update.message.reply_document(document=open(file_name, "rb"))
+# Send back with clickable caption link
+await update.message.reply_document(
+    document=open(file_name, "rb"),
+    caption=f"अधिक जानकारी के लिए टेलीग्राम चैनल ज्वॉइन करे:\nhttps://t.me/raj_education_news"
+)
+
+# Optional cleanup
+try:
+    os.remove(file_name)
+except:
+    pass
 
 app = ApplicationBuilder().token(BOT_TOKEN).build()
 
 app.add_handler(MessageHandler(filters.Document.PDF, handle_pdf))
 
 print("Bot started...")
+
 app.run_polling()
