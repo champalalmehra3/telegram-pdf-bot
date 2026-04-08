@@ -3,8 +3,6 @@ from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTyp
 from PyPDF2 import PdfReader, PdfWriter
 import os
 
-Railway environment variable se token lega
-
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 Apna channel link yahan set karo
